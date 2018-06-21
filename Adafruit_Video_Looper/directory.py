@@ -35,7 +35,7 @@ class DirectoryReader(object):
 
     def _get_movies(self):
         # Get list of paths to search from the file reader.
-        paths = self._reader.search_paths()
+        paths = self.search_paths()
         # Enumerate all movie files inside those paths.
         movies = []
         for ex in self._extensions:

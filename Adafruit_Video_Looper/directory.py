@@ -38,7 +38,7 @@ class DirectoryReader(object):
         paths = self.search_paths()
         # Enumerate all movie files inside those paths.
         movies = []
-        for ex in self._extensions:
+        for ex in ['mpg', 'mpeg', 'mp4']:
             for path in paths:
                 # Skip paths that don't exist or are files.
                 if not os.path.exists(path) or not os.path.isdir(path):

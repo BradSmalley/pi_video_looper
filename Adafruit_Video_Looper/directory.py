@@ -52,6 +52,7 @@ class DirectoryReader(object):
                                x[0] is not '.'])
         return movies
 
-    def create_file_reader(config):
-        """Create new file reader based on reading a directory on disk."""
-        return DirectoryReader(config)
+
+def create_file_reader(config):
+    """Create new file reader based on reading a directory on disk."""
+    return DirectoryReader(config)

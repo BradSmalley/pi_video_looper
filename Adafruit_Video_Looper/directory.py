@@ -1,6 +1,9 @@
 # Copyright 2015 Adafruit Industries.
 # Author: Tony DiCola
 # License: GNU GPLv2, see LICENSE.txt
+import os
+import re
+
 class DirectoryReader(object):
 
     def __init__(self, config):

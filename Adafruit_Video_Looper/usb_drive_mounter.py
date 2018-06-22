@@ -21,6 +21,7 @@ class USBDriveMounter(object):
         self._root = root
         self._readonly = readonly
         self._context = pyudev.Context()
+        self._monitor = pyudev.Monitor.from_netlink(self._context)
 
     def remove_all(self):
         """Unmount and remove mount points for all mounted drives."""
@@ -34,9 +35,9 @@ class USBDriveMounter(object):
         """
         self.remove_all()
         # Enumerate USB drive partitions by path like /dev/sda1, etc.
-        nodes = [x.device_node for x in self._context.list_devices(subsystem='block', 
-                                                                   DEVTYPE='partition') \
+        nodes = [x.device_node for x in self._context.list_devices(subsystem='block', DEVTYPE='partition')
                  if 'ID_BUS' in x and x['ID_BUS'] == 'usb']
+
         # Mount each drive under the mount root.
         for i, node in enumerate(nodes):
             path = self._root + str(i)
@@ -49,7 +50,6 @@ class USBDriveMounter(object):
 
     def start_monitor(self):
         """Initialize monitoring of USB drive changes."""
-        self._monitor = pyudev.Monitor.from_netlink(self._context)
         self._monitor.filter_by('block', 'partition')
         self._monitor.start()
 
@@ -72,9 +72,9 @@ if __name__ == '__main__':
     drive_mounter = USBDriveMounter(readonly=True)
     drive_mounter.mount_all()
     drive_mounter.start_monitor()
-    print 'Listening for USB drive changes (press Ctrl-C to quite)...'
+    print('Listening for USB drive changes (press Ctrl-C to quite)...')
     while True:
         if drive_mounter.poll_changes():
-            print 'USB drives changed!'
+            print('USB drives changed!')
             drive_mounter.mount_all()
         time.sleep(0)

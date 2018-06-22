@@ -57,11 +57,11 @@ class VideoLooper(object):
         self._is_random = self._config.getboolean('video_looper', 'is_random')
         # Parse string of 3 comma separated values like "255, 255, 255" into 
         # list of ints for colors.
-        self._bgcolor = map(int, self._config.get('video_looper', 'bgcolor') \
-                            .translate(None, ',') \
+        self._bgcolor = map(int, self._config.get('video_looper', 'bgcolor')
+                            .translate(None, ',')
                             .split())
-        self._fgcolor = map(int, self._config.get('video_looper', 'fgcolor') \
-                            .translate(None, ',') \
+        self._fgcolor = map(int, self._config.get('video_looper', 'fgcolor')
+                            .translate(None, ',')
                             .split())
         # Load sound volume file name value
         self._sound_vol_file = self._config.get('omxplayer', 'sound_vol_file');
@@ -97,7 +97,8 @@ class VideoLooper(object):
         return importlib.import_module('.' + module, 'Adafruit_Video_Looper') \
             .create_file_reader(self._config)
 
-    def _is_number(iself, s):
+    @staticmethod
+    def _is_number(s):
         try:
             float(s)
             return True
@@ -148,20 +149,31 @@ class VideoLooper(object):
             font = self._small_font
         return font.render(message, True, self._fgcolor, self._bgcolor)
 
-    def _animate_countdown(self, playlist, seconds=3):
+    def _animate_countdown(self, playlist):
         """Print text with the number of loaded movies and a quick countdown
         message if the on screen display is enabled.
         """
         # Print message to console with number of movies in playlist.
         message = 'Found {0} movie{1}.'.format(playlist.length(),
                                                's' if playlist.length() >= 2 else '')
+
+        # Read delay time form config - Minimum value is 0, Maximum value is 60
+        seconds = self._config.get('video_looper', 'delay_seconds')
+        if seconds < 0:
+            seconds = 0
+        elif seconds > 60:
+            seconds = 60
+
         self._print(message)
+
         # Do nothing else if the OSD is turned off.
         if not self._osd:
             return
         # Draw message with number of movies loaded and animate countdown.
         # First render text that doesn't change and get static dimensions.
         label1 = self._render_text(message + ' Starting playback in:')
+        label3 = self._render_text('Brad Rocks!')
+        l3w, l3h = label3.get_size()
         l1w, l1h = label1.get_size()
         sw, sh = self._screen.get_size()
         for i in range(seconds, 0, -1):
@@ -173,6 +185,7 @@ class VideoLooper(object):
             self._screen.fill(self._bgcolor)
             self._screen.blit(label1, (sw / 2 - l1w / 2, sh / 2 - l2h / 2 - l1h))
             self._screen.blit(label2, (sw / 2 - l2w / 2, sh / 2 - l2h / 2))
+            self._screen.blit(label3, (sw / 2 - l3w / 2, sh - (l3h + 10)))
             pygame.display.update()
             # Pause for a second between each frame.
             time.sleep(1)

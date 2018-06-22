@@ -18,7 +18,6 @@ class USBDriveReader(object):
                                         readonly=self._readonly)
         self._mounter.start_monitor()
 
-
     def _load_config(self, config):
         self._mount_path = config.get('usb_drive', 'mount_path')
         self._readonly = config.getboolean('usb_drive', 'readonly')
@@ -36,6 +35,7 @@ class USBDriveReader(object):
         """
         return self._mounter.poll_changes()
 
+    @staticmethod
     def idle_message(self):
         """Return a message to display when idle and no files are found."""
         return 'Insert USB drive with compatible movies.'

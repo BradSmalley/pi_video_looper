@@ -158,7 +158,11 @@ class VideoLooper(object):
                                                's' if playlist.length() >= 2 else '')
 
         # Read delay time form config - Minimum value is 0, Maximum value is 60
-        seconds = self._config.get('video_looper', 'delay_seconds')
+        config_delay = self._config.get('video_looper', 'delay_seconds')
+        seconds = 5;
+        if self._is_number(config_delay):
+            seconds = int(float(config_delay))
+
         if seconds < 0:
             seconds = 0
         elif seconds > 60:

@@ -43,7 +43,7 @@ class VideoLooper(object):
         """Create an instance of the main video looper application class. Must
         pass path to a valid video looper ini configuration file.
         """
-        self._ip = subprocess.check_output(['hostname', '-I'])
+        self._ip = subprocess.check_output(['hostname', '-I'])[:-1]
         # Load the configuration.
         self._config = ConfigParser.SafeConfigParser()
         if len(self._config.read(config_path)) == 0:

@@ -8,7 +8,7 @@ import re
 import sys
 import signal
 import time
-
+import subprocess
 import pygame
 
 from model import Playlist
@@ -43,6 +43,7 @@ class VideoLooper(object):
         """Create an instance of the main video looper application class. Must
         pass path to a valid video looper ini configuration file.
         """
+        self._ip = subprocess.check_output(['hostname', '-I'])
         # Load the configuration.
         self._config = ConfigParser.SafeConfigParser()
         if len(self._config.read(config_path)) == 0:
@@ -198,16 +199,20 @@ class VideoLooper(object):
         """Print idle message from file reader."""
         # Print message to console.
         message = self._reader.idle_message()
+
         self._print(message)
         # Do nothing else if the OSD is turned off.
         if not self._osd:
             return
         # Display idle message in center of screen.
+        label2 = self._render_text(self._ip)
         label = self._render_text(message)
         lw, lh = label.get_size()
+        l2w, l2h = label2.get_size()
         sw, sh = self._screen.get_size()
         self._screen.fill(self._bgcolor)
         self._screen.blit(label, (sw / 2 - lw / 2, sh / 2 - lh / 2))
+        self._screen.blit(label2, (sw / 2 - l2w / 2, sh - (l2h + 10)))
         pygame.display.update()
 
     def _prepare_to_run_playlist(self, playlist):

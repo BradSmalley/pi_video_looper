@@ -28,7 +28,7 @@ class OMXPlayer(object):
         return self._extensions
 
     def play(self, movie, loop=False, vol=0):
-        """Play the provided movied file, optionally looping it repeatedly."""
+        """Play the provided movie file, optionally looping it repeatedly."""
         self.stop(3)  # Up to 3 second delay to let the old player stop.
         # Assemble list of arguments.
         args = ['omxplayer']
@@ -41,7 +41,7 @@ class OMXPlayer(object):
         args.append(movie)                # Add movie file path.
         # Run omxplayer process and direct standard output to /dev/null.
         self._process = subprocess.Popen(args,
-                                         stdout=open(os.devnull, 'wb'),
+                                         stdout=open('/var/log/pi_video_looper.log', 'wb'),
                                          close_fds=True)
 
     def is_playing(self):

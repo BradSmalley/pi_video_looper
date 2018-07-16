@@ -228,9 +228,12 @@ class VideoLooper(object):
             self._idle_message()
 
     def run(self):
-        """Main program loop.  Will never return!"""
+        """Main program loop. """
         # Main loop to play videos in the playlist and listen for file changes.
         while self._running:
+            if os.path.exists('/home/pi/Video/stop_file'):
+                self._player.stop(3)
+                return
             # Load and play a new movie if nothing is playing.
             if not self._player.is_playing():
                 if self._waiting_to_build_playlist:

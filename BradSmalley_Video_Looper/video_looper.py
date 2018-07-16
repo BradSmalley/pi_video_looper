@@ -50,6 +50,8 @@ class VideoLooper(object):
             raise RuntimeError(
                 'Failed to find configuration file at {0}, is the application properly installed?'.format(config_path))
         self._console_output = self._config.getboolean('video_looper', 'console_output')
+        self._interrupt_on_new = self._config.getboolean('video_looper', 'interrupt_on_new')
+        self._waiting_to_build_playlist = True
         # Load configured video player and file reader modules.
         self._player = self._load_player()
         self._reader = self._load_file_reader()
@@ -227,26 +229,26 @@ class VideoLooper(object):
 
     def run(self):
         """Main program loop.  Will never return!"""
-        # Get playlist of movies to play from file reader.
-        playlist = self._build_playlist()
-        self._prepare_to_run_playlist(playlist)
         # Main loop to play videos in the playlist and listen for file changes.
         while self._running:
             # Load and play a new movie if nothing is playing.
             if not self._player.is_playing():
+                if self._waiting_to_build_playlist:
+                    playlist = self._build_playlist()
+                    self._prepare_to_run_playlist(playlist);
+                    self._waiting_to_build_playlist = False
                 movie = playlist.get_next()
                 if movie is not None:
                     # Start playing the first available movie.
                     self._print('Playing movie: {0}'.format(movie))
-                    self._player.play(movie, loop=playlist.length() == 1, vol=self._sound_vol)
+                    self._player.play(movie, loop=False, vol=self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
-                self._player.stop(3)  # Up to 3 second delay waiting for old 
-                # player to stop.
-                # Rebuild playlist and show countdown again (if OSD enabled).
-                playlist = self._build_playlist()
-                self._prepare_to_run_playlist(playlist)
+                if self._interrupt_on_new:
+                    self._player.stop(3)  # Up to 3 second delay waiting for old
+                else:
+                    self._waiting_to_build_playlist = True
             # Give the CPU some time to do other tasks.
             time.sleep(0.002)
 

@@ -231,7 +231,7 @@ class VideoLooper(object):
         """Main program loop. """
         # Main loop to play videos in the playlist and listen for file changes.
         while self._running:
-            if os.path.exists('/home/pi/Video/stop_file'):
+            if os.path.exists('/home/pi/Videos/stop_file'):
                 self._player.stop(3)
                 return
             # Load and play a new movie if nothing is playing.

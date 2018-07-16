@@ -247,6 +247,8 @@ class VideoLooper(object):
             if self._reader.is_changed():
                 if self._interrupt_on_new:
                     self._player.stop(3)  # Up to 3 second delay waiting for old
+                    playlist = self._build_playlist()
+                    self._prepare_to_run_playlist(playlist);
                 else:
                     self._waiting_to_build_playlist = True
             # Give the CPU some time to do other tasks.

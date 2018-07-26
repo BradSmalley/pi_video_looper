@@ -2,6 +2,9 @@
 # Author: Tony DiCola
 # License: GNU GPLv2, see LICENSE.txt
 import ConfigParser
+from flask import Flask
+from flask import render_template
+
 import importlib
 import os
 import re
@@ -13,6 +16,7 @@ import pygame
 
 from model import Playlist
 
+app = Flask(__name__)
 
 # Basic video looper architecure:
 #
@@ -279,5 +283,14 @@ if __name__ == '__main__':
     # Configure signal handlers to quit on TERM or INT signal.
     signal.signal(signal.SIGTERM, videolooper.signal_quit)
     signal.signal(signal.SIGINT, videolooper.signal_quit)
+
+    # Setup web interface
+    app = Flask(__name__)
+
+    @app.route('/')
+    @app.route('/<name>')
+    def default_route(name=None):
+        return render_template('hello.html', name=name)
+
     # Run the main loop.
     videolooper.run()

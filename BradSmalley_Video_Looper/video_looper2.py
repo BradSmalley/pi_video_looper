@@ -51,7 +51,7 @@ class VideoLooper(object):
         print("Your Computer IP Address is:" + self.ip)
 
         # Load the configuration.
-        self._config = ConfigParser.SafeConfigParser()
+        self._config = ConfigParser()
         if len(self._config.read(config_path)) == 0:
             raise RuntimeError(
                 'Failed to find configuration file at {0}, is the application properly installed?'.format(config_path))
